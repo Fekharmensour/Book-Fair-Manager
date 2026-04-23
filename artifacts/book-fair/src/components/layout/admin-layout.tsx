@@ -1,16 +1,20 @@
 import { Switch, Route, useLocation } from "wouter";
-import { LayoutDashboard, BookText, Users, Receipt, LogOut } from "lucide-react";
+import { LayoutDashboard, BookText, Users, Receipt, LogOut, ShoppingBag } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/language-toggle";
 
 import AdminHome from "@/pages/admin/home";
 import AdminBooks from "@/pages/admin/books";
 import AdminPresenters from "@/pages/admin/presenters";
 import AdminSales from "@/pages/admin/sales";
+import AdminOrders from "@/pages/admin/orders";
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const [location, setLocation] = useLocation();
+  const { t } = useI18n();
 
   if (!user || !user.isAdmin) {
     setLocation("/");
@@ -18,10 +22,11 @@ export default function AdminLayout() {
   }
 
   const navItems = [
-    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { label: "Books", href: "/admin/books", icon: BookText },
-    { label: "Presenters", href: "/admin/presenters", icon: Users },
-    { label: "Sales", href: "/admin/sales", icon: Receipt },
+    { label: t("dashboard"), href: "/admin", icon: LayoutDashboard },
+    { label: t("booksInventory"), href: "/admin/books", icon: BookText },
+    { label: t("presentersStaff"), href: "/admin/presenters", icon: Users },
+    { label: t("allSales"), href: "/admin/sales", icon: Receipt },
+    { label: t("orders"), href: "/admin/orders", icon: ShoppingBag },
   ];
 
   return (
@@ -32,7 +37,7 @@ export default function AdminLayout() {
             <BookText className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-serif font-bold text-lg leading-tight">Admin POS</h2>
+            <h2 className="font-serif font-bold text-lg leading-tight">{t("appName")}</h2>
             <p className="text-xs text-muted-foreground">{user.username}</p>
           </div>
         </div>
@@ -55,7 +60,8 @@ export default function AdminLayout() {
             );
           })}
         </nav>
-        <div className="p-4 border-t">
+        <div className="p-4 border-t space-y-2">
+          <LanguageToggle />
           <button
             onClick={() => {
               logout();
@@ -64,7 +70,7 @@ export default function AdminLayout() {
             className="flex items-center gap-3 px-3 py-2.5 rounded-md text-destructive hover:bg-destructive/10 w-full transition-colors"
           >
             <LogOut className="w-5 h-5" />
-            Logout
+            {t("logout")}
           </button>
         </div>
       </aside>
@@ -75,6 +81,7 @@ export default function AdminLayout() {
           <Route path="/admin/books" component={AdminBooks} />
           <Route path="/admin/presenters" component={AdminPresenters} />
           <Route path="/admin/sales" component={AdminSales} />
+          <Route path="/admin/orders" component={AdminOrders} />
         </Switch>
       </main>
     </div>

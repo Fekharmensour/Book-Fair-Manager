@@ -100,6 +100,32 @@ export interface PresenterSales {
   totalSales: number;
 }
 
+export interface Order {
+  id: string;
+  productId: string;
+  productName: string;
+  coverImage?: string | null;
+  customerName: string;
+  phone: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  status: string;
+  createdAt: string;
+}
+
+export interface CreateOrderBody {
+  productId: string;
+  customerName: string;
+  phone: string;
+  /** @minimum 1 */
+  quantity: number;
+}
+
+export interface UpdateOrderBody {
+  status: string;
+}
+
 export interface TopBook {
   productId: string;
   name: string;

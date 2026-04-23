@@ -201,6 +201,85 @@ export const CreateSaleResponse = zod.object({
 });
 
 /**
+ * @summary List all customer orders
+ */
+export const ListOrdersResponseItem = zod.object({
+  id: zod.string(),
+  productId: zod.string(),
+  productName: zod.string(),
+  coverImage: zod.string().nullish(),
+  customerName: zod.string(),
+  phone: zod.string(),
+  quantity: zod.number(),
+  unitPrice: zod.number(),
+  totalPrice: zod.number(),
+  status: zod.string(),
+  createdAt: zod.string(),
+});
+export const ListOrdersResponse = zod.array(ListOrdersResponseItem);
+
+/**
+ * @summary Place a customer order (public)
+ */
+
+export const CreateOrderBody = zod.object({
+  productId: zod.string(),
+  customerName: zod.string(),
+  phone: zod.string(),
+  quantity: zod.number().min(1),
+});
+
+export const CreateOrderResponse = zod.object({
+  id: zod.string(),
+  productId: zod.string(),
+  productName: zod.string(),
+  coverImage: zod.string().nullish(),
+  customerName: zod.string(),
+  phone: zod.string(),
+  quantity: zod.number(),
+  unitPrice: zod.number(),
+  totalPrice: zod.number(),
+  status: zod.string(),
+  createdAt: zod.string(),
+});
+
+/**
+ * @summary Update an order's status
+ */
+export const UpdateOrderParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateOrderBody = zod.object({
+  status: zod.string(),
+});
+
+export const UpdateOrderResponse = zod.object({
+  id: zod.string(),
+  productId: zod.string(),
+  productName: zod.string(),
+  coverImage: zod.string().nullish(),
+  customerName: zod.string(),
+  phone: zod.string(),
+  quantity: zod.number(),
+  unitPrice: zod.number(),
+  totalPrice: zod.number(),
+  status: zod.string(),
+  createdAt: zod.string(),
+});
+
+/**
+ * @summary Delete an order
+ */
+export const DeleteOrderParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DeleteOrderResponse = zod.object({
+  ok: zod.boolean(),
+});
+
+/**
  * @summary Overall sales summary (revenue, units, low stock)
  */
 export const GetSalesSummaryResponse = zod.object({

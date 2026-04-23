@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./createOrderBody";
 export * from "./createProductBody";
 export * from "./createSaleBody";
 export * from "./createUserBody";
@@ -14,10 +15,12 @@ export * from "./healthStatus";
 export * from "./listSalesParams";
 export * from "./loginBody";
 export * from "./okResponse";
+export * from "./order";
 export * from "./presenterSales";
 export * from "./product";
 export * from "./sale";
 export * from "./salesSummary";
 export * from "./topBook";
+export * from "./updateOrderBody";
 export * from "./updateProductBody";
 export * from "./user";

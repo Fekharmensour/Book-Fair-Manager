@@ -5,8 +5,10 @@ import { formatCurrency } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n";
 
 export default function AdminHome() {
+  const { t, lang } = useI18n();
   const { data: summary, isLoading: loadingSummary } = useGetSalesSummary();
   const { data: topBooks, isLoading: loadingTopBooks } = useGetTopBooks();
   const { data: presenters, isLoading: loadingPresenters } = useGetSalesByPresenter();
@@ -15,33 +17,32 @@ export default function AdminHome() {
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 w-full">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Overview of book fair performance</p>
+          <h1 className="text-3xl font-serif font-bold text-foreground">{t("dashboard")}</h1>
+          <p className="text-muted-foreground mt-1">{t("overviewTitle")}</p>
         </div>
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title="Total Revenue"
-          value={summary ? formatCurrency(summary.totalRevenue) : null}
+          title={t("totalRevenue")}
+          value={summary ? formatCurrency(summary.totalRevenue, lang) : null}
           icon={<DollarSign className="w-5 h-5 text-primary" />}
           loading={loadingSummary}
         />
         <StatCard
-          title="Units Sold"
+          title={t("unitsSold")}
           value={summary?.totalUnits.toLocaleString()}
           icon={<BookCopy className="w-5 h-5 text-secondary" />}
           loading={loadingSummary}
         />
         <StatCard
-          title="Total Sales"
+          title={t("totalSales")}
           value={summary?.totalSales.toLocaleString()}
           icon={<Users className="w-5 h-5 text-accent" />}
           loading={loadingSummary}
         />
         <StatCard
-          title="Low Stock Alerts"
+          title={t("lowStockAlerts")}
           value={summary?.lowStockCount.toLocaleString()}
           icon={<AlertTriangle className="w-5 h-5 text-destructive" />}
           loading={loadingSummary}
@@ -50,12 +51,11 @@ export default function AdminHome() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        {/* Top Books */}
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xl font-serif">Top Books</CardTitle>
+            <CardTitle className="text-xl font-serif">{t("topBooks")}</CardTitle>
             <Link href="/admin/books">
-              <Button variant="ghost" size="sm">View All</Button>
+              <Button variant="ghost" size="sm">{t("viewAll")}</Button>
             </Link>
           </CardHeader>
           <CardContent>
@@ -64,7 +64,7 @@ export default function AdminHome() {
                 {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full" />)}
               </div>
             ) : topBooks?.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">No sales yet.</div>
+              <div className="text-center py-8 text-muted-foreground">{t("noSalesYet2")}</div>
             ) : (
               <div className="divide-y mt-2">
                 {topBooks?.slice(0, 5).map((book) => (
@@ -80,9 +80,9 @@ export default function AdminHome() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-foreground truncate">{book.name}</p>
-                      <p className="text-sm text-muted-foreground">{book.totalUnits} units sold</p>
+                      <p className="text-sm text-muted-foreground">{book.totalUnits} {t("unitsSoldShort")}</p>
                     </div>
-                    <div className="font-bold text-lg">{formatCurrency(book.totalRevenue)}</div>
+                    <div className="font-bold text-lg">{formatCurrency(book.totalRevenue, lang)}</div>
                   </div>
                 ))}
               </div>
@@ -90,12 +90,11 @@ export default function AdminHome() {
           </CardContent>
         </Card>
 
-        {/* Presenter Leaderboard */}
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xl font-serif">Presenter Leaderboard</CardTitle>
+            <CardTitle className="text-xl font-serif">{t("presenterLeaderboard")}</CardTitle>
             <Link href="/admin/presenters">
-              <Button variant="ghost" size="sm">Manage Users</Button>
+              <Button variant="ghost" size="sm">{t("manageUsers")}</Button>
             </Link>
           </CardHeader>
           <CardContent>
@@ -104,7 +103,7 @@ export default function AdminHome() {
                 {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
               </div>
             ) : presenters?.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">No presenters with sales yet.</div>
+              <div className="text-center py-8 text-muted-foreground">{t("noPresentersWithSales")}</div>
             ) : (
               <div className="divide-y mt-2">
                 {presenters?.map((presenter, i) => (
@@ -115,12 +114,12 @@ export default function AdminHome() {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">{presenter.username}</p>
-                        <p className="text-sm text-muted-foreground">{presenter.totalSales} sales</p>
+                        <p className="text-sm text-muted-foreground">{presenter.totalSales} {t("sales")}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold">{formatCurrency(presenter.totalRevenue)}</div>
-                      <div className="text-xs text-muted-foreground">{presenter.totalUnits} units</div>
+                      <div className="font-bold">{formatCurrency(presenter.totalRevenue, lang)}</div>
+                      <div className="text-xs text-muted-foreground">{presenter.totalUnits} {t("units")}</div>
                     </div>
                   </div>
                 ))}

@@ -13,6 +13,7 @@ tags:
   - name: products
   - name: sales
   - name: stats
+  - name: orders
 paths:
   /healthz:
     get:
@@ -222,6 +223,85 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+  /orders:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      summary: List all customer orders
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Place a customer order (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderBody"
+      responses:
+        "200":
+          description: Order placed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Invalid request or insufficient stock
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /orders/{id}:
+    patch:
+      operationId: updateOrder
+      tags: [orders]
+      summary: Update an order's status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+    delete:
+      operationId: deleteOrder
+      tags: [orders]
+      summary: Delete an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
 
   /stats/summary:
     get:
@@ -437,6 +517,53 @@ components:
           type: integer
         totalSales:
           type: integer
+    Order:
+      type: object
+      required: [id, productId, productName, customerName, phone, quantity, unitPrice, totalPrice, status, createdAt]
+      properties:
+        id:
+          type: string
+        productId:
+          type: string
+        productName:
+          type: string
+        coverImage:
+          type: string
+          nullable: true
+        customerName:
+          type: string
+        phone:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+        totalPrice:
+          type: number
+        status:
+          type: string
+        createdAt:
+          type: string
+    CreateOrderBody:
+      type: object
+      required: [productId, customerName, phone, quantity]
+      properties:
+        productId:
+          type: string
+        customerName:
+          type: string
+        phone:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+    UpdateOrderBody:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
     TopBook:
       type: object
       required: [productId, name, totalUnits, totalRevenue]

@@ -11,17 +11,19 @@ import { Plus, Trash2, Shield, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 
 export default function AdminPresenters() {
+  const { t } = useI18n();
   const { data: users, isLoading } = useListUsers();
   const { user: currentUser } = useAuth();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
-  
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
   const createMutation = useCreateUser();
   const deleteMutation = useDeleteUser();
 
@@ -36,25 +38,25 @@ export default function AdminPresenters() {
     createMutation.mutate({ data: { username, isAdmin } }, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
-        toast({ title: "User created" });
+        toast({ title: t("userCreated") });
         setIsFormOpen(false);
       },
       onError: (err: any) => {
-        toast({ variant: "destructive", title: "Error", description: err?.error || "Failed to create user" });
+        toast({ variant: "destructive", title: t("error"), description: err?.error || t("failedToCreateUser") });
       }
     });
   };
 
   const handleDelete = (id: string, name: string) => {
     if (id === currentUser?.id) {
-      toast({ variant: "destructive", title: "Cannot delete yourself" });
+      toast({ variant: "destructive", title: t("cannotDeleteSelf") });
       return;
     }
-    if (confirm(`Are you sure you want to remove user "${name}"?`)) {
+    if (confirm(t("confirmRemoveUser", { name }))) {
       deleteMutation.mutate({ id }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
-          toast({ title: "User removed" });
+          toast({ title: t("userRemoved") });
         }
       });
     }
@@ -64,11 +66,11 @@ export default function AdminPresenters() {
     <div className="p-6 md:p-8 max-w-5xl mx-auto space-y-6 w-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold">Presenters & Staff</h1>
-          <p className="text-muted-foreground mt-1">Manage POS access</p>
+          <h1 className="text-3xl font-serif font-bold">{t("presentersStaff")}</h1>
+          <p className="text-muted-foreground mt-1">{t("managePosAccess")}</p>
         </div>
         <Button onClick={handleOpenCreate} className="hover-elevate">
-          <Plus className="w-4 h-4 mr-2" /> Add User
+          <Plus className="w-4 h-4 mr-2" /> {t("addUser")}
         </Button>
       </div>
 
@@ -76,16 +78,16 @@ export default function AdminPresenters() {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t("user")}</TableHead>
+              <TableHead>{t("role")}</TableHead>
+              <TableHead className="text-right">{t("actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow><TableCell colSpan={3} className="text-center py-8">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} className="text-center py-8">{t("loading")}</TableCell></TableRow>
             ) : users?.length === 0 ? (
-              <TableRow><TableCell colSpan={3} className="text-center py-8 text-muted-foreground">No users found.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={3} className="text-center py-8 text-muted-foreground">{t("noBooksFound")}</TableCell></TableRow>
             ) : (
               users?.map((user) => (
                 <TableRow key={user.id}>
@@ -94,21 +96,21 @@ export default function AdminPresenters() {
                       {user.isAdmin ? <Shield className="w-4 h-4" /> : <UserIcon className="w-4 h-4" />}
                     </div>
                     {user.username}
-                    {user.id === currentUser?.id && <Badge variant="outline" className="ml-2">You</Badge>}
+                    {user.id === currentUser?.id && <Badge variant="outline" className="ml-2">{t("you")}</Badge>}
                   </TableCell>
                   <TableCell>
                     {user.isAdmin ? (
-                      <Badge variant="default" className="bg-primary/10 text-primary hover:bg-primary/20 border-0">Admin</Badge>
+                      <Badge variant="default" className="bg-primary/10 text-primary hover:bg-primary/20 border-0">{t("admin")}</Badge>
                     ) : (
-                      <Badge variant="secondary" className="bg-secondary/10 text-secondary hover:bg-secondary/20 border-0">Presenter</Badge>
+                      <Badge variant="secondary" className="bg-secondary/10 text-secondary hover:bg-secondary/20 border-0">{t("presenter")}</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       disabled={user.id === currentUser?.id}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10" 
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={() => handleDelete(user.id, user.username)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -124,25 +126,25 @@ export default function AdminPresenters() {
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
+            <DialogTitle>{t("addNewUser")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-6 py-4">
             <div className="space-y-2">
-              <Label>Username</Label>
+              <Label>{t("username")}</Label>
               <Input required value={username} onChange={e => setUsername(e.target.value)} placeholder="e.g. jsmith" autoFocus />
-              <p className="text-xs text-muted-foreground">Users log in using this username only.</p>
+              <p className="text-xs text-muted-foreground">{t("usersLogInWithUsername")}</p>
             </div>
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="space-y-0.5">
-                <Label className="text-base">Administrator</Label>
-                <p className="text-sm text-muted-foreground">Grant access to dashboard and inventory.</p>
+                <Label className="text-base">{t("administrator")}</Label>
+                <p className="text-sm text-muted-foreground">{t("grantAdminAccess")}</p>
               </div>
               <Switch checked={isAdmin} onCheckedChange={setIsAdmin} />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>{t("cancel")}</Button>
               <Button type="submit" disabled={createMutation.isPending || !username.trim()}>
-                Create User
+                {t("createUser")}
               </Button>
             </DialogFooter>
           </form>

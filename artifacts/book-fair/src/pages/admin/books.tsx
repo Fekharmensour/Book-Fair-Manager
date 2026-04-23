@@ -10,17 +10,19 @@ import { formatCurrency } from "@/lib/format";
 import { Plus, Edit2, Trash2, Image as ImageIcon, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { useI18n } from "@/lib/i18n";
 
 export default function AdminBooks() {
+  const { t, lang } = useI18n();
   const { data: products, isLoading } = useListProducts();
   const [search, setSearch] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", description: "", coverImage: "", stock: 10, priceBuy: 0, priceSell: 0 });
-  
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct();
   const deleteMutation = useDeleteProduct();
@@ -58,7 +60,7 @@ export default function AdminBooks() {
       updateMutation.mutate({ id: editingId, data }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          toast({ title: "Book updated" });
+          toast({ title: t("bookUpdated") });
           setIsFormOpen(false);
         }
       });
@@ -66,7 +68,7 @@ export default function AdminBooks() {
       createMutation.mutate({ data }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          toast({ title: "Book created" });
+          toast({ title: t("bookCreated") });
           setIsFormOpen(false);
         }
       });
@@ -74,11 +76,11 @@ export default function AdminBooks() {
   };
 
   const handleDelete = (id: string, name: string) => {
-    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+    if (confirm(t("confirmDeleteBook", { name }))) {
       deleteMutation.mutate({ id }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          toast({ title: "Book deleted" });
+          toast({ title: t("bookDeleted") });
         }
       });
     }
@@ -88,11 +90,11 @@ export default function AdminBooks() {
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 w-full">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold">Books Inventory</h1>
-          <p className="text-muted-foreground mt-1">Manage titles, pricing, and stock</p>
+          <h1 className="text-3xl font-serif font-bold">{t("booksInventory")}</h1>
+          <p className="text-muted-foreground mt-1">{t("manageTitlesPricing")}</p>
         </div>
         <Button onClick={handleOpenCreate} className="hover-elevate">
-          <Plus className="w-4 h-4 mr-2" /> Add Book
+          <Plus className="w-4 h-4 mr-2" /> {t("addBook")}
         </Button>
       </div>
 
@@ -100,7 +102,7 @@ export default function AdminBooks() {
         <Search className="w-5 h-5 text-muted-foreground mr-2" />
         <input
           type="text"
-          placeholder="Search books..."
+          placeholder={t("searchBooks")}
           className="bg-transparent border-none outline-none flex-1 w-full"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -112,19 +114,19 @@ export default function AdminBooks() {
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="w-16">Cover</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead className="text-right">Cost</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-                <TableHead className="text-right">Stock</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-16">{t("cover")}</TableHead>
+                <TableHead>{t("title")}</TableHead>
+                <TableHead className="text-right">{t("cost")}</TableHead>
+                <TableHead className="text-right">{t("price")}</TableHead>
+                <TableHead className="text-right">{t("stockLabel")}</TableHead>
+                <TableHead className="text-right">{t("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center py-8">{t("loading")}</TableCell></TableRow>
               ) : filteredProducts?.length === 0 ? (
-                <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No books found.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">{t("noBooksFound")}</TableCell></TableRow>
               ) : (
                 filteredProducts?.map((product) => (
                   <TableRow key={product.id}>
@@ -138,8 +140,8 @@ export default function AdminBooks() {
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell className="text-right text-muted-foreground">{formatCurrency(product.priceBuy)}</TableCell>
-                    <TableCell className="text-right font-medium">{formatCurrency(product.priceSell)}</TableCell>
+                    <TableCell className="text-right text-muted-foreground">{formatCurrency(product.priceBuy, lang)}</TableCell>
+                    <TableCell className="text-right font-medium">{formatCurrency(product.priceSell, lang)}</TableCell>
                     <TableCell className="text-right">
                       <Badge variant={product.stock <= 5 ? "destructive" : "secondary"}>
                         {product.stock}
@@ -166,39 +168,39 @@ export default function AdminBooks() {
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Book" : "Add New Book"}</DialogTitle>
+            <DialogTitle>{editingId ? t("editBook") : t("addNewBook")}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Title</Label>
-              <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Book Title" />
+              <Label>{t("title")}</Label>
+              <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder={t("bookTitlePlaceholder")} />
             </div>
             <div className="space-y-2">
-              <Label>Description (Optional)</Label>
-              <Input value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Short description" />
+              <Label>{t("descriptionOptional")}</Label>
+              <Input value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder={t("shortDescription")} />
             </div>
             <div className="space-y-2">
-              <Label>Cover Image URL (Optional)</Label>
+              <Label>{t("coverUrlOptional")}</Label>
               <Input value={formData.coverImage} onChange={e => setFormData({...formData, coverImage: e.target.value})} placeholder="https://..." />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label>Cost Price</Label>
+                <Label>{t("costPrice")}</Label>
                 <Input type="number" min="0" step="0.01" required value={formData.priceBuy} onChange={e => setFormData({...formData, priceBuy: Number(e.target.value)})} />
               </div>
               <div className="space-y-2">
-                <Label>Selling Price</Label>
+                <Label>{t("sellingPrice")}</Label>
                 <Input type="number" min="0" step="0.01" required value={formData.priceSell} onChange={e => setFormData({...formData, priceSell: Number(e.target.value)})} />
               </div>
               <div className="space-y-2">
-                <Label>Stock</Label>
+                <Label>{t("stockLabel")}</Label>
                 <Input type="number" min="0" required value={formData.stock} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} />
               </div>
             </div>
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>{t("cancel")}</Button>
               <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                {editingId ? "Save Changes" : "Create Book"}
+                {editingId ? t("saveChanges") : t("createBook")}
               </Button>
             </DialogFooter>
           </form>

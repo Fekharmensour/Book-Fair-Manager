@@ -9,20 +9,21 @@ import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import AdminLayout from "@/components/layout/admin-layout";
 import PresenterPOS from "@/pages/presenter/pos";
+import Landing from "@/pages/landing";
 
 const queryClient = new QueryClient();
 
 function GuardedRoute({ component: Component, adminOnly = false }: { component: any, adminOnly?: boolean }) {
   const { user } = useAuth();
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     if (!user) {
       setLocation("/login");
     } else if (adminOnly && !user.isAdmin) {
-      setLocation("/");
+      setLocation("/pos");
     }
-  }, [user, location, setLocation, adminOnly]);
+  }, [user, setLocation, adminOnly]);
 
   if (!user) return null;
   if (adminOnly && !user.isAdmin) return null;
@@ -31,22 +32,13 @@ function GuardedRoute({ component: Component, adminOnly = false }: { component: 
 }
 
 function AppRoutes() {
-  const { user } = useAuth();
-  const [location, setLocation] = useLocation();
-
-  useEffect(() => {
-    // If logged in and hits root, route admins to dashboard, presenters stay on POS
-    if (user && location === "/" && user.isAdmin) {
-      setLocation("/admin");
-    }
-  }, [user, location, setLocation]);
-
   return (
     <Switch>
+      <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
-      
+
       {/* Presenter Route */}
-      <Route path="/">
+      <Route path="/pos">
         {() => <GuardedRoute component={PresenterPOS} />}
       </Route>
 
@@ -61,6 +53,9 @@ function AppRoutes() {
         {() => <GuardedRoute component={AdminLayout} adminOnly={true} />}
       </Route>
       <Route path="/admin/sales">
+        {() => <GuardedRoute component={AdminLayout} adminOnly={true} />}
+      </Route>
+      <Route path="/admin/orders">
         {() => <GuardedRoute component={AdminLayout} adminOnly={true} />}
       </Route>
 
