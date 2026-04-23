@@ -1,0 +1,250 @@
+**Project Title:**
+Book Fair Sales Management System (Ultra-Simple POS)
+
+---
+
+## 🎯 Goal
+
+Build a **very simple, fast, and beginner-friendly web application** to manage book sales during a book fair.
+
+The system must allow multiple presenters (sellers) to quickly sell books with minimal interaction, and allow an admin to monitor sales and stock.
+
+👉 The system is designed for **non-technical users**, so simplicity and speed are the highest priority.
+
+---
+
+## 🧱 Tech Stack
+
+* Frontend: React (Vite or Next.js)
+* Backend & Database: Supabase (PostgreSQL)
+* Storage: Supabase Storage (for book images)
+* Authentication: ❌ DO NOT use Supabase Auth
+
+---
+
+## 🔐 Authentication Model (IMPORTANT)
+
+Use a **username-only login system**:
+
+* No password
+* No email
+* No OAuth
+
+### Login Flow:
+
+1. User enters username
+2. System checks if user exists in database
+3. If yes:
+
+   * Store user in localStorage
+   * يعتبر المستخدم logged in
+4. If not:
+
+   * Show error
+
+### Session:
+
+* Persist login using `localStorage`
+* Add logout button (clears localStorage)
+
+⚠️ No security layer required (controlled event environment)
+
+---
+
+## 👤 User Roles
+
+### 1. Admin
+
+* Full access
+
+### 2. Presenter (Seller)
+
+* Can only:
+
+  * Sell books
+  * View their own sales (optional)
+
+---
+
+## 🗄️ Database Schema (Supabase)
+
+### users
+
+* id (uuid)
+* username (unique)
+* is_admin (boolean)
+* created_at
+
+---
+
+### products
+
+* id
+* name
+* stock
+* price_buy
+* price_sell
+* cover_image (URL from storage)
+* description
+
+---
+
+### sales
+
+* id
+* product_id (FK)
+* user_id (FK → users.id)
+* quantity
+* unit_price
+* total_price
+* buyer_name (optional)
+* created_at
+
+---
+
+## 📦 Core Features
+
+---
+
+### 👨‍🏫 Presenter Interface (MOST IMPORTANT)
+
+Design like a **Point of Sale (POS)**.
+
+After login:
+
+* Show list of books as **large cards**
+
+  * Cover image
+  * Name
+  * Price
+
+* On click:
+
+  * Open simple modal or panel
+  * Input:
+
+    * Quantity
+    * Optional buyer name
+
+* Button:
+
+  * ✅ “Sell”
+
+---
+
+### 🔄 Sale Logic
+
+When selling a book:
+
+1. Check if stock is enough
+2. Calculate total price
+3. Insert into `sales`
+4. Reduce stock in `products`
+5. Save `unit_price` at time of sale
+
+---
+
+### 👨‍💼 Admin Dashboard
+
+Admin can:
+
+#### Manage Users
+
+* Create presenter (username only)
+
+#### Manage Products
+
+* Add/edit/delete books
+* Upload cover image (Supabase Storage)
+
+#### View Data
+
+* All sales
+* Sales per presenter
+* Total revenue
+* Remaining stock
+
+---
+
+## 📁 File Upload (Supabase Storage)
+
+* Create bucket: `books`
+* Upload cover images
+* Store public URL in `products.cover_image`
+
+---
+
+## 🎨 UI/UX Requirements (CRITICAL)
+
+Design for **beginners**:
+
+* Very simple layout
+* Large buttons
+* Minimal text
+* Mobile-friendly
+* Fast interaction (no page reload)
+
+### Avoid:
+
+* Complex forms
+* Too many inputs
+* Technical language
+
+---
+
+## ⚙️ Frontend Behavior
+
+* Store logged-in user in `localStorage`
+* Use global state (Context or Zustand)
+
+Example:
+
+```javascript
+localStorage.setItem("user", JSON.stringify(user));
+```
+
+---
+
+## 🔐 Access Control (Frontend Only)
+
+* If `user.is_admin === true`:
+
+  * Show admin dashboard
+
+* Else:
+
+  * Show presenter POS interface
+
+---
+
+## ⚠️ Important Constraints
+
+* No password system
+* No email system
+* No external authentication
+* Keep everything **fast and minimal**
+
+---
+
+## 📊 Optional Features
+
+* Daily sales summary
+* Best-selling books
+* Low stock alert
+* Export sales (CSV)
+
+---
+
+## 🚀 Deliverables
+
+* Fully working React app
+* Connected to Supabase
+* Clean and simple UI
+* Ready for real usage during event
+
+---
+
+## 🧠 Key Principle
+
+**This is a real-world event tool.
+Speed, clarity, and ease of use are more important than security or complexity.**
