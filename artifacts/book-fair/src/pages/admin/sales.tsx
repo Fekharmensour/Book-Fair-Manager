@@ -1,11 +1,33 @@
-import { useListSales } from "@workspace/api-client-react";
+import { useListSales, useDeleteSale, getListSalesQueryKey, getListProductsQueryKey, getGetSalesSummaryQueryKey } from "@workspace/api-client-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminSales() {
   const { t, lang } = useI18n();
   const { data: sales, isLoading } = useListSales();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const deleteMutation = useDeleteSale();
+
+  const handleDelete = (id: string) => {
+    if (!confirm(t("confirmDeleteSale"))) return;
+    deleteMutation.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListSalesQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getSalesSummaryQueryKey() });
+          toast({ title: t("saleDeleted") });
+        },
+      }
+    );
+  };
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 w-full">
@@ -26,13 +48,14 @@ export default function AdminSales() {
                 <TableHead className="text-right">{t("qty")}</TableHead>
                 <TableHead className="text-right">{t("price")}</TableHead>
                 <TableHead className="text-right font-bold">{t("total")}</TableHead>
+                <TableHead className="text-right">{t("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8">{t("loading")}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8">{t("loading")}</TableCell></TableRow>
               ) : sales?.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">{t("noSalesRecorded")}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">{t("noSalesRecorded")}</TableCell></TableRow>
               ) : (
                 sales?.map((sale) => (
                   <TableRow key={sale.id}>
@@ -43,6 +66,17 @@ export default function AdminSales() {
                     <TableCell className="text-right">{sale.quantity}</TableCell>
                     <TableCell className="text-right text-muted-foreground">{formatCurrency(sale.unitPrice, lang)}</TableCell>
                     <TableCell className="text-right font-bold text-primary">{formatCurrency(sale.totalPrice, lang)}</TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => handleDelete(sale.id)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               )}

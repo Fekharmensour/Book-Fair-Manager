@@ -57,11 +57,11 @@ export default function Login() {
       </div>
       <Card className="w-full max-w-sm shadow-xl border-t-4 border-t-primary">
         <CardHeader className="text-center space-y-4 pt-8">
-          <div className="mx-auto bg-primary/10 w-16 h-16 flex items-center justify-center rounded-2xl">
-            <BookOpen className="w-8 h-8 text-primary" />
+          <div className="mx-auto w-24 h-24 flex items-center justify-center">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-serif text-foreground">{t("appName")}</CardTitle>
+            <CardTitle className="text-xl font-serif text-foreground leading-tight">{t("appName")}</CardTitle>
             <CardDescription>{t("enterUsernameToStart")}</CardDescription>
           </div>
         </CardHeader>

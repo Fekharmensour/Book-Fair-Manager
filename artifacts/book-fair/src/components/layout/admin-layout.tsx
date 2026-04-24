@@ -33,12 +33,10 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-muted/20 flex flex-col md:flex-row">
       <aside className="w-full md:w-64 bg-card border-r flex flex-col">
         <div className="p-6 border-b flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-lg text-primary">
-            <BookText className="w-5 h-5" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="w-12 h-12 object-contain" />
           <div>
-            <h2 className="font-serif font-bold text-lg leading-tight">{t("appName")}</h2>
-            <p className="text-xs text-muted-foreground">{user.username}</p>
+            <h2 className="font-serif font-bold text-sm leading-tight">{t("appName")}</h2>
+            <p className="text-xs text-muted-foreground mt-1">{user.username}</p>
           </div>
         </div>
         <nav className="flex-1 p-4 space-y-1">

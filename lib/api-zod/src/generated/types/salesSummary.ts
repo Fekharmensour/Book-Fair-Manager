@@ -10,5 +10,7 @@ export interface SalesSummary {
   totalRevenue: number;
   totalUnits: number;
   totalSales: number;
+  todayRevenue: number;
+  todayUnits: number;
   lowStockCount: number;
 }

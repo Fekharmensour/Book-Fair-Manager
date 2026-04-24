@@ -563,6 +563,9 @@ components:
       properties:
         status:
           type: string
+        userId:
+          type: string
+          nullable: true
 
     TopBook:
       type: object

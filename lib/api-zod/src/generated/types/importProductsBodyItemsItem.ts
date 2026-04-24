@@ -6,7 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface UpdateOrderBody {
-  status: string;
-  userId?: string | null;
-}
+export type ImportProductsBodyItemsItem = {
+  name: string;
+  stock: number;
+  priceSelle: number;
+};

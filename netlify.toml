@@ -1,0 +1,12 @@
+[build]
+  command = "pnpm install && pnpm --filter @workspace/api-spec run codegen && pnpm --filter @workspace/api-zod run build && pnpm --filter @workspace/api-client-react run build && pnpm --filter @workspace/book-fair run build"
+  publish = "artifacts/book-fair/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

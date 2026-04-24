@@ -15,6 +15,7 @@ export interface Sale {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  donation: number;
   buyerName?: string | null;
   createdAt: string;
 }

@@ -73,6 +73,7 @@ export interface Sale {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  donation: number;
   buyerName?: string | null;
   createdAt: string;
 }
@@ -82,6 +83,8 @@ export interface CreateSaleBody {
   userId: string;
   /** @minimum 1 */
   quantity: number;
+  /** @minimum 0 */
+  donation?: number;
   buyerName?: string | null;
 }
 
@@ -89,6 +92,8 @@ export interface SalesSummary {
   totalRevenue: number;
   totalUnits: number;
   totalSales: number;
+  todayRevenue: number;
+  todayUnits: number;
   lowStockCount: number;
 }
 
@@ -124,6 +129,7 @@ export interface CreateOrderBody {
 
 export interface UpdateOrderBody {
   status: string;
+  userId?: string | null;
 }
 
 export interface TopBook {
@@ -136,6 +142,20 @@ export interface TopBook {
 
 export type LoginBody = {
   username: string;
+};
+
+export type ImportProductsBodyItemsItem = {
+  name: string;
+  stock: number;
+  priceSelle: number;
+};
+
+export type ImportProductsBody = {
+  items: ImportProductsBodyItemsItem[];
+};
+
+export type ImportProducts200 = {
+  count?: number;
 };
 
 export type ListSalesParams = {
