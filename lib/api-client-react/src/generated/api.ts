@@ -23,8 +23,6 @@ import type {
   CreateUserBody,
   ErrorResponse,
   HealthStatus,
-  ImportProducts200,
-  ImportProductsBody,
   ListSalesParams,
   LoginBody,
   OkResponse,
@@ -520,7 +518,7 @@ export function useListProducts<
 }
 
 /**
- * @summary Add a new book to inventory
+ * @summary Create a product
  */
 export const getCreateProductUrl = () => {
   return `/api/products`;
@@ -583,7 +581,7 @@ export type CreateProductMutationBody = BodyType<CreateProductBody>;
 export type CreateProductMutationError = ErrorType<unknown>;
 
 /**
- * @summary Add a new book to inventory
+ * @summary Create a product
  */
 export const useCreateProduct = <
   TError = ErrorType<unknown>,
@@ -603,92 +601,6 @@ export const useCreateProduct = <
   TContext
 > => {
   return useMutation(getCreateProductMutationOptions(options));
-};
-
-/**
- * @summary Import books from CSV data
- */
-export const getImportProductsUrl = () => {
-  return `/api/products/import`;
-};
-
-export const importProducts = async (
-  importProductsBody: ImportProductsBody,
-  options?: RequestInit,
-): Promise<ImportProducts200> => {
-  return customFetch<ImportProducts200>(getImportProductsUrl(), {
-    ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(importProductsBody),
-  });
-};
-
-export const getImportProductsMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof importProducts>>,
-    TError,
-    { data: BodyType<ImportProductsBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof importProducts>>,
-  TError,
-  { data: BodyType<ImportProductsBody> },
-  TContext
-> => {
-  const mutationKey = ["importProducts"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof importProducts>>,
-    { data: BodyType<ImportProductsBody> }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return importProducts(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type ImportProductsMutationResult = NonNullable<
-  Awaited<ReturnType<typeof importProducts>>
->;
-export type ImportProductsMutationBody = BodyType<ImportProductsBody>;
-export type ImportProductsMutationError = ErrorType<unknown>;
-
-/**
- * @summary Import books from CSV data
- */
-export const useImportProducts = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof importProducts>>,
-    TError,
-    { data: BodyType<ImportProductsBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof importProducts>>,
-  TError,
-  { data: BodyType<ImportProductsBody> },
-  TContext
-> => {
-  return useMutation(getImportProductsMutationOptions(options));
 };
 
 /**
@@ -1040,90 +952,6 @@ export const useCreateSale = <
   TContext
 > => {
   return useMutation(getCreateSaleMutationOptions(options));
-};
-
-/**
- * @summary Delete a sale and restore stock
- */
-export const getDeleteSaleUrl = (id: string) => {
-  return `/api/sales/${id}`;
-};
-
-export const deleteSale = async (
-  id: string,
-  options?: RequestInit,
-): Promise<OkResponse> => {
-  return customFetch<OkResponse>(getDeleteSaleUrl(id), {
-    ...options,
-    method: "DELETE",
-  });
-};
-
-export const getDeleteSaleMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteSale>>,
-    TError,
-    { id: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteSale>>,
-  TError,
-  { id: string },
-  TContext
-> => {
-  const mutationKey = ["deleteSale"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteSale>>,
-    { id: string }
-  > = (props) => {
-    const { id } = props ?? {};
-
-    return deleteSale(id, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteSaleMutationResult = NonNullable<
-  Awaited<ReturnType<typeof deleteSale>>
->;
-
-export type DeleteSaleMutationError = ErrorType<unknown>;
-
-/**
- * @summary Delete a sale and restore stock
- */
-export const useDeleteSale = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteSale>>,
-    TError,
-    { id: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof deleteSale>>,
-  TError,
-  { id: string },
-  TContext
-> => {
-  return useMutation(getDeleteSaleMutationOptions(options));
 };
 
 /**

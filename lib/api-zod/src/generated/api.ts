@@ -83,7 +83,7 @@ export const ListProductsResponseItem = zod.object({
 export const ListProductsResponse = zod.array(ListProductsResponseItem);
 
 /**
- * @summary Add a new book to inventory
+ * @summary Create a product
  */
 export const createProductBodyStockMin = 0;
 
@@ -109,23 +109,6 @@ export const CreateProductResponse = zod.object({
   priceBuy: zod.number(),
   priceSell: zod.number(),
   createdAt: zod.string(),
-});
-
-/**
- * @summary Import books from CSV data
- */
-export const ImportProductsBody = zod.object({
-  items: zod.array(
-    zod.object({
-      name: zod.string(),
-      stock: zod.number(),
-      priceSelle: zod.number(),
-    }),
-  ),
-});
-
-export const ImportProductsResponse = zod.object({
-  count: zod.number().optional(),
 });
 
 /**
@@ -188,7 +171,6 @@ export const ListSalesResponseItem = zod.object({
   quantity: zod.number(),
   unitPrice: zod.number(),
   totalPrice: zod.number(),
-  donation: zod.number(),
   buyerName: zod.string().nullish(),
   createdAt: zod.string(),
 });
@@ -198,13 +180,10 @@ export const ListSalesResponse = zod.array(ListSalesResponseItem);
  * @summary Record a sale (decrements stock)
  */
 
-export const createSaleBodyDonationMin = 0;
-
 export const CreateSaleBody = zod.object({
   productId: zod.string(),
   userId: zod.string(),
   quantity: zod.number().min(1),
-  donation: zod.number().min(createSaleBodyDonationMin).optional(),
   buyerName: zod.string().nullish(),
 });
 
@@ -217,20 +196,8 @@ export const CreateSaleResponse = zod.object({
   quantity: zod.number(),
   unitPrice: zod.number(),
   totalPrice: zod.number(),
-  donation: zod.number(),
   buyerName: zod.string().nullish(),
   createdAt: zod.string(),
-});
-
-/**
- * @summary Delete a sale and restore stock
- */
-export const DeleteSaleParams = zod.object({
-  id: zod.coerce.string(),
-});
-
-export const DeleteSaleResponse = zod.object({
-  ok: zod.boolean(),
 });
 
 /**
@@ -320,8 +287,6 @@ export const GetSalesSummaryResponse = zod.object({
   totalRevenue: zod.number(),
   totalUnits: zod.number(),
   totalSales: zod.number(),
-  todayRevenue: zod.number(),
-  todayUnits: zod.number(),
   lowStockCount: zod.number(),
 });
 

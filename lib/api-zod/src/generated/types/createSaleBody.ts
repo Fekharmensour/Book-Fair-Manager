@@ -11,7 +11,5 @@ export interface CreateSaleBody {
   userId: string;
   /** @minimum 1 */
   quantity: number;
-  /** @minimum 0 */
-  donation?: number;
   buyerName?: string | null;
 }

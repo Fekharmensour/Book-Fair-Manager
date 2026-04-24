@@ -1,4 +1,5 @@
 import { useListSales, useDeleteSale, getListSalesQueryKey, getListProductsQueryKey, getGetSalesSummaryQueryKey } from "@workspace/api-client-react";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
@@ -22,7 +23,7 @@ export default function AdminSales() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListSalesQueryKey() });
           queryClient.invalidateQueries({ queryKey: getListProductsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getSalesSummaryQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetSalesSummaryQueryKey() });
           toast({ title: t("saleDeleted") });
         },
       }

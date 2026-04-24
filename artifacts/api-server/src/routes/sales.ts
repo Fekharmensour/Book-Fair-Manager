@@ -113,4 +113,34 @@ router.post("/sales", async (req, res) => {
   res.json(result.sale);
 });
 
+router.delete("/sales/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const result = await db.transaction(async (tx) => {
+    const [sale] = await tx
+      .select()
+      .from(salesTable)
+      .where(eq(salesTable.id, id))
+      .limit(1);
+    if (!sale) {
+      return { error: "Sale not found", status: 404 as const };
+    }
+
+    await tx
+      .update(productsTable)
+      .set({ stock: sql`${productsTable.stock} + ${sale.quantity}` })
+      .where(eq(productsTable.id, sale.productId));
+
+    await tx.delete(salesTable).where(eq(salesTable.id, id));
+
+    return { ok: true as const };
+  });
+
+  if ("error" in result) {
+    res.status(result.status ?? 400).json({ error: result.error });
+    return;
+  }
+  res.json({ ok: true });
+});
+
 export default router;
