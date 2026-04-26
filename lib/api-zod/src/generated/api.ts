@@ -252,6 +252,7 @@ export const UpdateOrderParams = zod.object({
 
 export const UpdateOrderBody = zod.object({
   status: zod.string(),
+  userId: zod.string().nullish(),
 });
 
 export const UpdateOrderResponse = zod.object({

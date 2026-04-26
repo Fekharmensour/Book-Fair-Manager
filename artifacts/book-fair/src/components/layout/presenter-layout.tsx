@@ -15,10 +15,8 @@ export default function PresenterLayout({ children }: { children: ReactNode }) {
       <header className="bg-card border-b sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg text-primary">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <h1 className="font-serif font-bold text-xl">{t("appName")}</h1>
+            <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
+            <h1 className="font-serif font-bold text-sm sm:text-base">{t("appName")}</h1>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-sm hidden sm:block">

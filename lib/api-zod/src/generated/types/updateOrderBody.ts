@@ -8,4 +8,5 @@
 
 export interface UpdateOrderBody {
   status: string;
+  userId?: string | null;
 }

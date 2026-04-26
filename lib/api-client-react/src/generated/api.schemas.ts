@@ -124,6 +124,7 @@ export interface CreateOrderBody {
 
 export interface UpdateOrderBody {
   status: string;
+  userId?: string | null;
 }
 
 export interface TopBook {

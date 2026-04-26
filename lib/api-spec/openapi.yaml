@@ -223,6 +223,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /sales/{id}:
+    delete:
+      operationId: deleteSale
+      tags: [sales]
+      summary: Delete a sale (restores stock)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+        "404":
+          description: Sale not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /orders:
     get:
@@ -563,6 +587,9 @@ components:
       properties:
         status:
           type: string
+        userId:
+          type: string
+          nullable: true
 
     TopBook:
       type: object

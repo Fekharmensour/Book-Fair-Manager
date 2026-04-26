@@ -1,0 +1,5 @@
+Start the Backend API (Port 5000)
+pnpm --filter @workspace/api-server run dev
+
+2. Start the Frontend Application (Port 5001)
+pnpm --filter @workspace/book-fair run dev

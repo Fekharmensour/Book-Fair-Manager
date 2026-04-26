@@ -13,6 +13,7 @@ export const salesTable = pgTable("sales", {
   quantity: integer("quantity").notNull(),
   unitPrice: numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
   totalPrice: numeric("total_price", { precision: 10, scale: 2 }).notNull(),
+  donation: numeric("donation", { precision: 10, scale: 2 }).notNull().default("0"),
   buyerName: text("buyer_name"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -4,7 +4,7 @@ export type Lang = "en" | "ar";
 
 const dict = {
   en: {
-    appName: "Book Fair POS",
+    appName: "مكتب الطلبة الجامعيين الميزابيين بقسنطينة",
     tagline: "Discover and order great books",
     enter: "Enter",
     loggingIn: "Logging in...",
@@ -20,7 +20,7 @@ const dict = {
     backToShop: "Back to shop",
 
     // Landing
-    ourBooks: "Our Books",
+    ourBooks: "Book Fair",
     browseAndOrder: "Browse our collection and place an order in seconds",
     cart: "Cart",
     cartEmpty: "Your cart is empty",
@@ -153,7 +153,7 @@ const dict = {
     didYouForget: "Did you forget to add the page to the router?",
   },
   ar: {
-    appName: "نقطة بيع معرض الكتاب",
+    appName: "مكتب الطلبة الجامعيين الميزابيين بقسنطينة",
     tagline: "اكتشف واطلب كتبًا رائعة",
     enter: "دخول",
     loggingIn: "جاري الدخول...",
@@ -168,7 +168,7 @@ const dict = {
     staffLogin: "دخول الموظفين",
     backToShop: "العودة إلى المتجر",
 
-    ourBooks: "كتبنا",
+    ourBooks: "معرض الكتاب",
     browseAndOrder: "تصفح مجموعتنا وأرسل طلبك في ثوانٍ",
     cart: "السلة",
     cartEmpty: "سلتك فارغة",
@@ -277,6 +277,16 @@ const dict = {
     book: "الكتاب",
     buyer: "المشتري",
     noSalesRecorded: "لم يتم تسجيل أي مبيعات بعد.",
+    confirmDeleteSale: "هل أنت متأكد من حذف هذه البيعة؟ سيؤدي ذلك إلى استعادة مخزون الكتاب.",
+    saleDeleted: "تم حذف البيعة واستعادة المخزون",
+
+    todayRevenue: "إيرادات اليوم",
+    todayUnits: "وحدات اليوم",
+    importCSV: "استيراد CSV",
+    csvImportSuccess: "تم استيراد {count} كتب بنجاح",
+    csvImportError: "فشل استيراد CSV",
+    donation: "تبرع",
+    donationOptional: "تبرع (اختياري)",
 
     customerOrders: "طلبات العملاء",
     customerOrdersDesc: "الطلبات الواردة من صفحة المتجر العامة",

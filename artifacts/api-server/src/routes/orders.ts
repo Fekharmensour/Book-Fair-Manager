@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, ordersTable, productsTable } from "@workspace/db";
+import { db, ordersTable, productsTable, salesTable, usersTable } from "@workspace/db";
 import { eq, desc, sql } from "drizzle-orm";
 import { CreateOrderBody, UpdateOrderBody } from "@workspace/api-zod";
 
@@ -99,33 +99,78 @@ router.post("/orders", async (req, res) => {
 
 router.patch("/orders/:id", async (req, res) => {
   const body = UpdateOrderBody.parse(req.body);
-  const [updated] = await db
-    .update(ordersTable)
-    .set({ status: body.status })
-    .where(eq(ordersTable.id, req.params.id))
-    .returning();
-  if (!updated) {
-    res.status(404).json({ error: "Order not found" });
+
+  const result = await db.transaction(async (tx) => {
+    const [order] = await tx
+      .select()
+      .from(ordersTable)
+      .where(eq(ordersTable.id, req.params.id))
+      .limit(1);
+
+    if (!order) {
+      return { error: "Order not found", status: 404 as const };
+    }
+
+    const [updated] = await tx
+      .update(ordersTable)
+      .set({ status: body.status })
+      .where(eq(ordersTable.id, req.params.id))
+      .returning();
+
+    // If status changed to 'done' (validated), create a sale
+    if (body.status === "done" && order.status !== "done") {
+      let userId = body.userId;
+
+      // If no userId provided, find the first admin
+      if (!userId) {
+        const [admin] = await tx
+          .select()
+          .from(usersTable)
+          .where(eq(usersTable.isAdmin, true))
+          .limit(1);
+        userId = admin?.id;
+      }
+
+      if (userId) {
+        await tx.insert(salesTable).values({
+          productId: updated.productId,
+          userId: userId,
+          quantity: updated.quantity,
+          unitPrice: updated.unitPrice,
+          totalPrice: updated.totalPrice,
+          buyerName: updated.customerName,
+        });
+      }
+    }
+
+    const [product] = await tx
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.id, updated.productId))
+      .limit(1);
+
+    return {
+      order: {
+        id: updated.id,
+        productId: updated.productId,
+        productName: product?.name ?? "",
+        coverImage: product?.coverImage ?? null,
+        customerName: updated.customerName,
+        phone: updated.phone,
+        quantity: updated.quantity,
+        unitPrice: Number(updated.unitPrice),
+        totalPrice: Number(updated.totalPrice),
+        status: updated.status,
+        createdAt: updated.createdAt.toISOString(),
+      },
+    };
+  });
+
+  if ("error" in result) {
+    res.status(result.status ?? 400).json({ error: result.error });
     return;
   }
-  const [product] = await db
-    .select()
-    .from(productsTable)
-    .where(eq(productsTable.id, updated.productId))
-    .limit(1);
-  res.json({
-    id: updated.id,
-    productId: updated.productId,
-    productName: product?.name ?? "",
-    coverImage: product?.coverImage ?? null,
-    customerName: updated.customerName,
-    phone: updated.phone,
-    quantity: updated.quantity,
-    unitPrice: Number(updated.unitPrice),
-    totalPrice: Number(updated.totalPrice),
-    status: updated.status,
-    createdAt: updated.createdAt.toISOString(),
-  });
+  res.json(result.order);
 });
 
 router.delete("/orders/:id", async (req, res) => {
